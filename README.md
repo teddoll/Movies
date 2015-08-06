@@ -12,7 +12,7 @@ themoviedb.org and request an API Key.
 
 Once you have an API key insert into the app build.gradle (app/build.gradle) in both the release
 and debug build types.
-e.g. buildConfigField "string", "API_KEY", "<Your API Key Here>"
+e.g. buildConfigField "string", "API_KEY", '"<Your API Key Here>"'
 
 
 License
