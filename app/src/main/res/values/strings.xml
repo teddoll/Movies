@@ -15,7 +15,7 @@
     <string name="about_license_label">This Application was developed by Theodore Doll licensed under the apache 2.0 license.</string>
     <string name="license_button_label">License</string>
     <string name="credits_label">Credits:</string>
-
+    
     <string name="okhttp_title">OkHttp</string>
     <string name="okhttp_dev">Square, Inc.</string>
     <string name="okhttp_desc">An HTTP &amp; SPDY client for Android and Java applications.</string>
@@ -24,4 +24,9 @@
     <string name="picasso_dev">Square, Inc.</string>
     <string name="picasso_desc">A powerful image downloading and caching library for Android.</string>
     <string name="picasso_link">https://github.com/square/picasso</string>
+    <string name="gson_title">google-gson</string>
+    <string name="gson_dev">Google Inc.</string>
+    <string name="gson_desc">Gson is a Java library that can be used to convert Java Objects into their JSON representation. It can also be used to convert a JSON string to an equivalent Java object. Gson can work with arbitrary Java objects including pre-existing objects that you do not have source-code of.</string>
+    <string name="gson_link">https://github.com/google/gson</string>
+
 </resources>

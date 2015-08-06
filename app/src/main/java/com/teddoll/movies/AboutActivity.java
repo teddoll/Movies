@@ -57,6 +57,15 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        findViewById(R.id.about_gson).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(getString(R.string.gson_link)));
+                startActivity(i);
+            }
+        });
         findViewById(R.id.button_license).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
