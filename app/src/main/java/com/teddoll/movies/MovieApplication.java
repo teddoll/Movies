@@ -31,6 +31,9 @@ public class MovieApplication extends Application {
 
         HttpClientProvider.getInstance(this);
 
+        /*
+        Set up Picasso
+         */
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this, Integer.MAX_VALUE));
         Picasso built = builder.build();

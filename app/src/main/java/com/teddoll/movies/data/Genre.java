@@ -19,6 +19,9 @@ package com.teddoll.movies.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * A model object representing a genre from themoviedb.org
+ */
 public class Genre implements Parcelable {
 
     public final int id;

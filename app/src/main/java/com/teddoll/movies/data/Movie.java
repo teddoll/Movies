@@ -21,6 +21,9 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * A model object representing a Movie from themoviedb.org
+ */
 public class Movie implements Parcelable {
 
     public final boolean adult;

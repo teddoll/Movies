@@ -35,7 +35,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-
+/**
+ * Fragment for viewing a Movies details.
+ */
 public class InfoActivityFragment extends Fragment {
 
     private Movie movie;

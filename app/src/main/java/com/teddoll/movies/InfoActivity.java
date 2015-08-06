@@ -25,6 +25,9 @@ import android.view.MenuItem;
 
 import com.teddoll.movies.data.Movie;
 
+/**
+ * Activity housing an InfoActivityFragment.
+ */
 public class InfoActivity extends AppCompatActivity {
 
     private Movie movie;

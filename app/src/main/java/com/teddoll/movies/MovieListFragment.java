@@ -38,7 +38,7 @@ import java.util.List;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment for diplaying movies in a grid.
  */
 public class MovieListFragment extends Fragment {
 

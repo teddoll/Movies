@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Cache for Movie list backed by a flat file.
+ * Cache for Movie list backed the okhttp cache.
  */
 public class MovieProvider {
 

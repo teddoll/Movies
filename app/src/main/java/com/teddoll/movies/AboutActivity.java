@@ -25,6 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * Activty for providing versioning and credits.
+ */
 public class AboutActivity extends AppCompatActivity {
 
     @Override

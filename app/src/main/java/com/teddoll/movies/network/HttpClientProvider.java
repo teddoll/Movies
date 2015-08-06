@@ -25,6 +25,9 @@ import com.squareup.okhttp.OkHttpClient;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Singleton for the app to use to get access to okhttpClient.
+ */
 public class HttpClientProvider {
 
     private final OkHttpClient httpClient;

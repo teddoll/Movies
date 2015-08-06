@@ -36,6 +36,9 @@ import com.teddoll.movies.reciever.MovieSync;
 import java.util.List;
 
 
+/**
+ * Main Activity of the application. Holds a single fragment for viewing a grid of movies.
+ */
 public class MainActivity extends AppCompatActivity implements MovieListFragment.MovieListFragmentListener {
 
     private MovieProvider movieProvider;
