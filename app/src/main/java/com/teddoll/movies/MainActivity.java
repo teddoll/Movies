@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.teddoll.movies.data.Favorites;
 import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
 import com.teddoll.movies.network.HttpClientProvider;
@@ -43,18 +44,20 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
 
     private MovieProvider movieProvider;
 
-    private enum Sort {
-        POP, RATE
+    public enum Sort {
+        POP, RATE, FAVORITE
     }
 
     private Sort sort;
     private MovieListFragment fragment;
     private ProgressBar progress;
+    private Favorites favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        favorites = Favorites.getInstance(this);
         this.progress = (ProgressBar) findViewById(R.id.progress);
         this.movieProvider = MovieProvider.getInstance(HttpClientProvider.getInstance(this).getHttpClient());
         if (savedInstanceState == null) {
@@ -114,8 +117,14 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
             case RATE:
                 movies = movieProvider.getRatingMovies();
                 break;
+            case FAVORITE:
+                movies = favorites.getFavorites();
         }
         return movies;
+    }
+
+    private void setMovies() {
+
     }
 
     @Override
@@ -169,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
             case 1:
                 sort = Sort.RATE;
                 break;
+            case 2:
+                sort = Sort.FAVORITE;
+                break;
         }
         fragment.updateMovies(getMovies());
     }
@@ -183,5 +195,10 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
     @Override
     public void refreshMovies() {
         updateMovies();
+    }
+
+    @Override
+    public Sort getSort() {
+        return sort;
     }
 }
