@@ -30,6 +30,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.teddoll.movies.config.Config;
+import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
 import com.teddoll.movies.data.Video;
 import com.teddoll.movies.network.HttpClientProvider;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MovieSync extends BroadcastReceiver {
@@ -157,11 +159,11 @@ public class MovieSync extends BroadcastReceiver {
         void onVideos(List<Video> videos);
     }
 
-    public static void getVideos(final OkHttpClient client, final OnGetVideosListener listener) {
+    public static void getVideos(final OkHttpClient client, Movie movie, final OnGetVideosListener listener) {
         if (listener == null)
             throw new IllegalArgumentException("OnGetVideosListener cannot be null");
         Request request = new Request.Builder()
-                .url(VIDEO_URL)
+                .url(String.format(Locale.US, VIDEO_URL, movie.id))
                 .addHeader("Accept", "application/json")
                 .build();
 
