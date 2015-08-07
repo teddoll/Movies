@@ -22,6 +22,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -29,6 +31,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.teddoll.movies.config.Config;
 import com.teddoll.movies.data.MovieProvider;
+import com.teddoll.movies.data.Video;
 import com.teddoll.movies.network.HttpClientProvider;
 
 import org.json.JSONArray;
@@ -36,6 +39,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MovieSync extends BroadcastReceiver {
@@ -43,6 +49,7 @@ public class MovieSync extends BroadcastReceiver {
     private static final String POP_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + Config.API_KEY;
     private static final String RATE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=" + Config.API_KEY;
     private static final String GENRE_URL = "http://api.themoviedb.org/3/genre/movie/list?api_key=" + Config.API_KEY;
+    private static final String VIDEO_URL = "http://api.themoviedb.org/3/movie/%s/videos?api_key=" + Config.API_KEY;
 
     private static final long INTERVAL = AlarmManager.INTERVAL_DAY;
 
@@ -144,6 +151,46 @@ public class MovieSync extends BroadcastReceiver {
         });
 
 
+    }
+
+    public interface OnGetVideosListener {
+        void onVideos(List<Video> videos);
+    }
+
+    public static void getVideos(final OkHttpClient client, final OnGetVideosListener listener) {
+        if (listener == null)
+            throw new IllegalArgumentException("OnGetVideosListener cannot be null");
+        Request request = new Request.Builder()
+                .url(VIDEO_URL)
+                .addHeader("Accept", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                listener.onVideos(new ArrayList<Video>(0));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(response.body().string());
+                        JSONArray array = json.optJSONArray("results");
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<List<Video>>() {
+                        }.getType();
+                        List<Video> vids = gson.fromJson(array.toString(), type);
+                        listener.onVideos(vids);
+                    } catch (JSONException e) {
+                        listener.onVideos(new ArrayList<Video>(0));
+                    }
+                } else {
+                    listener.onVideos(new ArrayList<Video>(0));
+                }
+
+            }
+        });
     }
 
     private static synchronized void onComplete(MovieProvider cache, OnFetchCompleteListener listener) {
