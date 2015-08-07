@@ -93,7 +93,7 @@ public class MovieListFragment extends Fragment {
         grid = (RecyclerView) view.findViewById(R.id.recyclerview);
         grid.setHasFixedSize(true);
         grid.setLayoutManager(new GridLayoutManager(getActivity(), this.colunms));
-        grid.setAdapter(new MyAdapter(null, getActivity(), listener));
+        grid.setAdapter(new MovieAdapter(null, getActivity(), listener));
         return view;
     }
 
@@ -104,10 +104,10 @@ public class MovieListFragment extends Fragment {
         } else {
             error.setVisibility(View.GONE);
         }
-        grid.setAdapter(new MyAdapter(movies, getActivity(), listener));
+        ((MovieAdapter) grid.getAdapter()).updateMovies(movies);
     }
 
-    static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    static class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
         private List<Movie> movies;
 
         private final Context context;
@@ -145,7 +145,7 @@ public class MovieListFragment extends Fragment {
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(List<Movie> movies, Context c, MovieListFragmentListener listener) {
+        public MovieAdapter(List<Movie> movies, Context c, MovieListFragmentListener listener) {
             this.movies = movies;
             this.context = c;
             this.listener = listener;
@@ -154,9 +154,14 @@ public class MovieListFragment extends Fragment {
 
         }
 
+        public void updateMovies(List<Movie> movies) {
+            this.movies = movies;
+            notifyDataSetChanged();
+        }
+
         // Create new views (invoked by the layout manager)
         @Override
-        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+        public MovieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                        int viewType) {
             // create a new view
             View v = LayoutInflater.from(parent.getContext())

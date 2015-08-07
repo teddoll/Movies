@@ -139,6 +139,14 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
             }
         });
         spinner.setAdapter(adapter);
+        switch (this.sort) {
+            case POP:
+                spinner.setSelection(0);
+                break;
+            case RATE:
+                spinner.setSelection(1);
+                break;
+        }
         return true;
     }
 
