@@ -8,6 +8,7 @@
     <string-array name="sort_array">
         <item>Popular</item>
         <item>Top Rated</item>
+        <item>Favorites</item>
     </string-array>
     <string name="title_activity_about">About</string>
 
@@ -28,5 +29,9 @@
     <string name="gson_dev">Google Inc.</string>
     <string name="gson_desc">Gson is a Java library that can be used to convert Java Objects into their JSON representation. It can also be used to convert a JSON string to an equivalent Java object. Gson can work with arbitrary Java objects including pre-existing objects that you do not have source-code of.</string>
     <string name="gson_link">https://github.com/google/gson</string>
+
+    <string name="add_favorite">Add favorite</string>
+    <string name="remove_favorite">Remove favorite</string>
+    <string name="empty_favorites">To add movies to you favorites select a movies from popular or top rated and click the add to favorites button</string>
 
 </resources>

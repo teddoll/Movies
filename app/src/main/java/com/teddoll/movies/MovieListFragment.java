@@ -44,14 +44,15 @@ public class MovieListFragment extends Fragment {
 
     public interface MovieListFragmentListener {
         void onMovieSelected(Movie movie);
-
         void refreshMovies();
+        MainActivity.Sort getSort();
     }
 
     private MovieListFragmentListener listener;
     private RecyclerView grid;
     private int colunms;
     private View error;
+    private View emptyFavorites;
 
     public MovieListFragment() {
     }
@@ -81,9 +82,10 @@ public class MovieListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
         error = view.findViewById(R.id.error_container);
         error.setVisibility(View.GONE);
+        emptyFavorites = view.findViewById(R.id.empty_faves);
         view.findViewById(R.id.button_retry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,10 +101,17 @@ public class MovieListFragment extends Fragment {
 
     public void updateMovies(List<Movie> movies) {
         if (movies == null || movies.size() == 0) {
-            error.setVisibility(View.VISIBLE);
+            if(listener.getSort() == MainActivity.Sort.FAVORITE) {
+                error.setVisibility(View.GONE);
+                emptyFavorites.setVisibility(View.VISIBLE);
+            } else {
+                error.setVisibility(View.VISIBLE);
+                emptyFavorites.setVisibility(View.GONE);
+            }
 
         } else {
             error.setVisibility(View.GONE);
+            emptyFavorites.setVisibility(View.GONE);
         }
         ((MovieAdapter) grid.getAdapter()).updateMovies(movies);
     }

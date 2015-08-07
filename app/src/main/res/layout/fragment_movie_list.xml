@@ -33,4 +33,16 @@
             android:layout_marginTop="16dp"
             android:text="@string/retry_label" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/empty_faves"
+        style="@style/TextAppearance.Dark.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/empty_favorites"
+        android:visibility="gone"/>
+
 </RelativeLayout>

@@ -16,15 +16,18 @@
 
 package com.teddoll.movies;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.teddoll.movies.data.Favorites;
 import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
 import com.teddoll.movies.network.HttpClientProvider;
@@ -42,6 +45,10 @@ public class InfoActivityFragment extends Fragment {
 
     private Movie movie;
 
+    private Favorites faves;
+
+    private Button add;
+    private Button remove;
     public InfoActivityFragment() {
     }
 
@@ -57,6 +64,13 @@ public class InfoActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         movie = getArguments().getParcelable("movie");
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        faves = Favorites.getInstance(activity);
     }
 
     @Override
@@ -69,6 +83,12 @@ public class InfoActivityFragment extends Fragment {
         TextView genre = (TextView) view.findViewById(R.id.genres);
         TextView dateText = (TextView) view.findViewById(R.id.date);
         ImageView poster = (ImageView) view.findViewById(R.id.poster);
+        add = (Button) view.findViewById(R.id.button_add_fave);
+        remove = (Button) view.findViewById(R.id.button_remove_fave);
+
+        String url = "http://image.tmdb.org/t/p/w500/" + movie.posterPath;
+
+        Picasso.with(getActivity()).load(url).into(poster);
 
         title.setText(movie.title);
         overview.setText(movie.overview);
@@ -103,11 +123,42 @@ public class InfoActivityFragment extends Fragment {
             }
             genre.setText(genreOut.toString());
         }
-        String url = "http://image.tmdb.org/t/p/w500/" + movie.posterPath;
 
-        Picasso.with(getActivity()).load(url).into(poster);
+        boolean favorited = faves.hasFavorite(movie);
+        if(favorited) {
+            add.setVisibility(View.GONE);
+            remove.setVisibility(View.VISIBLE);
+        } else {
+            remove.setVisibility(View.GONE);
+            add.setVisibility(View.VISIBLE);
+        }
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faves.addFavorite(movie);
+                add.setVisibility(View.GONE);
+                remove.setVisibility(View.VISIBLE);
+            }
+        });
+
+        remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faves.removeFavorite(movie);
+                remove.setVisibility(View.GONE);
+                add.setVisibility(View.VISIBLE);
+
+            }
+        });
 
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        faves.save();
     }
 
     private String getGenre(Map<Integer, String> genreMap, int id) {

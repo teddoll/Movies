@@ -95,6 +95,15 @@ public class Movie implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(o == null || !(o instanceof Movie)) {
+            return false;
+        }
+        Movie other = (Movie) o;
+        return this.id == other.id;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
