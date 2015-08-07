@@ -27,7 +27,7 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.teddoll.movies.BuildConfig;
+import com.teddoll.movies.config.Config;
 import com.teddoll.movies.data.MovieProvider;
 import com.teddoll.movies.network.HttpClientProvider;
 
@@ -40,9 +40,9 @@ import java.io.IOException;
 
 public class MovieSync extends BroadcastReceiver {
 
-    private static final String POP_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + BuildConfig.API_KEY;
-    private static final String RATE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=" + BuildConfig.API_KEY;
-    private static final String GENRE_URL = "http://api.themoviedb.org/3/genre/movie/list?api_key=" + BuildConfig.API_KEY;
+    private static final String POP_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + Config.API_KEY;
+    private static final String RATE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=" + Config.API_KEY;
+    private static final String GENRE_URL = "http://api.themoviedb.org/3/genre/movie/list?api_key=" + Config.API_KEY;
 
     private static final long INTERVAL = AlarmManager.INTERVAL_DAY;
 

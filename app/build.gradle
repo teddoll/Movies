@@ -15,10 +15,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "string", "API_KEY", '""'
-        }
-        debug {
-            buildConfigField "String", "API_KEY", '""'
         }
     }
 }
