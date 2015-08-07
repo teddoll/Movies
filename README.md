@@ -10,9 +10,8 @@ themoviedb.org API key
 To compile and run this app you will need to [create an account][1] with
 themoviedb.org and request an API Key.
 
-Once you have an API key insert into the app build.gradle (app/build.gradle) in both the release
-and debug build types.
-e.g. buildConfigField "string", "API_KEY", '"<Your API Key Here>"'
+Once you have an API key insert into app/src/main/java/com/teddoll/movies/config/Config.API_KEY
+e.g. public static final String API_KEY = "<Your API Key Here>";
 
 
 License
