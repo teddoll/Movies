@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
     tools:context="com.teddoll.movies.InfoActivityFragment">
 
     <LinearLayout
@@ -99,6 +100,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp" />
+
+
+        <TextView
+            style="@style/TextAppearance.Dark.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/trailer_label"
+            android:padding="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/videos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            />
 
     </LinearLayout>
 
