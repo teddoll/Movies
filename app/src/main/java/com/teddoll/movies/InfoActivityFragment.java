@@ -18,7 +18,6 @@ package com.teddoll.movies;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -158,7 +157,7 @@ public class InfoActivityFragment extends Fragment {
 
     private void addSeparator(LinearLayout parent, int height) {
         View line = new View(getActivity());
-        line.setBackgroundColor(Color.parseColor("#88444444"));
+        line.setBackgroundColor(getResources().getColor(R.color.info_seperator));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
         line.setLayoutParams(params);
         parent.addView(line);
