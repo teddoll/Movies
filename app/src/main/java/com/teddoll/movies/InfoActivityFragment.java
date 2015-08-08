@@ -176,9 +176,11 @@ public class InfoActivityFragment extends Fragment {
         MovieSync.getVideos(HttpClientProvider.getInstance(getActivity()).getHttpClient(), movie, new MovieSync.OnGetVideosListener() {
             @Override
             public void onVideos(final List<Video> videos) {
+                if(videos == null || videos.size() == 0) return;
                 Activity context = getActivity();
                 View view = getView();
                 if (view == null || context == null) return;
+                view.findViewById(R.id.trailer_container).setVisibility(View.VISIBLE);
                 final LinearLayout videosList = (LinearLayout) view.findViewById(R.id.videos);
                 context.runOnUiThread(new Runnable() {
                     @Override

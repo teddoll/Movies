@@ -70,18 +70,19 @@
                     style="@style/TextAppearance.Light.Medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/button_bg"
-                    android:text="@string/add_favorite"
-                    android:layout_marginTop="8dp"/>
+                    android:text="@string/add_favorite" />
+
                 <Button
                     android:id="@+id/button_remove_fave"
                     style="@style/TextAppearance.Light.Medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/button_neg_bg"
                     android:text="@string/remove_favorite"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </LinearLayout>
 
 
@@ -102,22 +103,29 @@
             android:padding="16dp" />
 
 
-        <TextView
-            style="@style/TextAppearance.Dark.Large"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/trailer_label"
-            android:padding="16dp"/>
-
         <LinearLayout
-            android:id="@+id/videos"
+            android:id="@+id/trailer_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
             android:orientation="vertical"
-            />
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TextAppearance.Dark.Large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/trailer_label" />
+
+            <LinearLayout
+                android:id="@+id/videos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical" />
+        </LinearLayout>
 
     </LinearLayout>
 
