@@ -34,5 +34,6 @@
     <string name="remove_favorite">Remove favorite</string>
     <string name="empty_favorites">To add movies to you favorites select a movies from popular or top rated and click the add to favorites button</string>
     <string name="trailer_label">Trailers:</string>
+    <string name="review_label">Reviews:</string>
 
 </resources>

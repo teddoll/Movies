@@ -32,6 +32,7 @@ import com.squareup.okhttp.Response;
 import com.teddoll.movies.config.Config;
 import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
+import com.teddoll.movies.data.Review;
 import com.teddoll.movies.data.Video;
 import com.teddoll.movies.network.HttpClientProvider;
 
@@ -52,6 +53,7 @@ public class MovieSync extends BroadcastReceiver {
     private static final String RATE_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=" + Config.API_KEY;
     private static final String GENRE_URL = "http://api.themoviedb.org/3/genre/movie/list?api_key=" + Config.API_KEY;
     private static final String VIDEO_URL = "http://api.themoviedb.org/3/movie/%s/videos?api_key=" + Config.API_KEY;
+    private static final String REVIEW_URL = "http://api.themoviedb.org/3/movie/%s/reviews?api_key=" + Config.API_KEY;
 
     private static final long INTERVAL = AlarmManager.INTERVAL_DAY;
 
@@ -189,6 +191,46 @@ public class MovieSync extends BroadcastReceiver {
                     }
                 } else {
                     listener.onVideos(new ArrayList<Video>(0));
+                }
+
+            }
+        });
+    }
+
+    public interface OnGetReviewsListener {
+        void onReviews(List<Review> reviews);
+    }
+
+    public static void getReviews(final OkHttpClient client, Movie movie, final OnGetReviewsListener listener) {
+        if (listener == null)
+            throw new IllegalArgumentException("OnGetReviewsListener cannot be null");
+        Request request = new Request.Builder()
+                .url(String.format(Locale.US, REVIEW_URL, movie.id))
+                .addHeader("Accept", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                listener.onReviews(new ArrayList<Review>(0));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(response.body().string());
+                        JSONArray array = json.optJSONArray("results");
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<List<Review>>() {
+                        }.getType();
+                        List<Review> reviews = gson.fromJson(array.toString(), type);
+                        listener.onReviews(reviews);
+                    } catch (JSONException e) {
+                        listener.onReviews(new ArrayList<Review>(0));
+                    }
+                } else {
+                    listener.onReviews(new ArrayList<Review>(0));
                 }
 
             }

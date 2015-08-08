@@ -33,6 +33,7 @@ import com.squareup.picasso.Picasso;
 import com.teddoll.movies.data.Favorites;
 import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
+import com.teddoll.movies.data.Review;
 import com.teddoll.movies.data.Video;
 import com.teddoll.movies.network.HttpClientProvider;
 import com.teddoll.movies.reciever.MovieSync;
@@ -176,15 +177,17 @@ public class InfoActivityFragment extends Fragment {
         MovieSync.getVideos(HttpClientProvider.getInstance(getActivity()).getHttpClient(), movie, new MovieSync.OnGetVideosListener() {
             @Override
             public void onVideos(final List<Video> videos) {
-                if(videos == null || videos.size() == 0) return;
+                if (videos == null || videos.size() == 0) return;
                 Activity context = getActivity();
-                View view = getView();
+                final View view = getView();
                 if (view == null || context == null) return;
-                view.findViewById(R.id.trailer_container).setVisibility(View.VISIBLE);
-                final LinearLayout videosList = (LinearLayout) view.findViewById(R.id.videos);
+
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        view.findViewById(R.id.trailer_container).setVisibility(View.VISIBLE);
+                        final LinearLayout videosList = (LinearLayout) view.findViewById(R.id.videos);
+                        videosList.removeAllViews();
                         LayoutInflater inflater = LayoutInflater.from(getActivity());
                         int height = getResources().getDimensionPixelSize(R.dimen.trailer_item_height);
                         int lineHeight = getResources().getDimensionPixelSize(R.dimen.linear_line_break);
@@ -194,6 +197,37 @@ public class InfoActivityFragment extends Fragment {
                         }
                         if (videos.size() > 0) {
                             addVideoView(videos.get(videos.size() - 1), videosList, inflater, height);
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+        MovieSync.getReviews(HttpClientProvider.getInstance(getActivity()).getHttpClient(), movie, new MovieSync.OnGetReviewsListener() {
+            @Override
+            public void onReviews(final List<Review> reviews) {
+                if (reviews == null || reviews.size() == 0) return;
+                Activity context = getActivity();
+                final View view = getView();
+                if (view == null || context == null) return;
+
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.findViewById(R.id.review_container).setVisibility(View.VISIBLE);
+                        final LinearLayout reviewList = (LinearLayout) view.findViewById(R.id.reviews);
+                        reviewList.removeAllViews();
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        int height = getResources().getDimensionPixelSize(R.dimen.trailer_item_height);
+                        int lineHeight = getResources().getDimensionPixelSize(R.dimen.linear_line_break);
+                        for (int i = 0; i < reviews.size() - 1; i++) {
+                            addReviewView(reviews.get(i), reviewList, inflater, height);
+                            addSeparator(reviewList, lineHeight);
+                        }
+                        if (reviews.size() > 0) {
+                            addReviewView(reviews.get(reviews.size() - 1), reviewList, inflater, height);
                         }
 
                     }
@@ -228,6 +262,19 @@ public class InfoActivityFragment extends Fragment {
                 startActivity(i);
             }
         });
+    }
+
+    private void addReviewView(final Review review, LinearLayout parent, LayoutInflater inflater, int height) {
+        View itemView = inflater.inflate(R.layout.item_review, parent, false);
+
+        TextView author = (TextView) itemView.findViewById(R.id.review_author);
+        TextView content = (TextView) itemView.findViewById(R.id.review_content);
+        author.setText(review.author);
+        content.setText(review.content);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        itemView.setLayoutParams(params);
+        parent.addView(itemView);
+
     }
 
     private String getGenre(Map<Integer, String> genreMap, int id) {
