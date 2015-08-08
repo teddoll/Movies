@@ -17,6 +17,8 @@
 package com.teddoll.movies;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,17 +26,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.teddoll.movies.data.Favorites;
 import com.teddoll.movies.data.Movie;
 import com.teddoll.movies.data.MovieProvider;
+import com.teddoll.movies.data.Video;
 import com.teddoll.movies.network.HttpClientProvider;
+import com.teddoll.movies.reciever.MovieSync;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -74,9 +80,9 @@ public class InfoActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_info, container, false);
+        final View view = inflater.inflate(R.layout.fragment_info, container, false);
         TextView title = (TextView) view.findViewById(R.id.title);
         TextView overview = (TextView) view.findViewById(R.id.overview);
         TextView rate = (TextView) view.findViewById(R.id.rating);
@@ -152,6 +158,8 @@ public class InfoActivityFragment extends Fragment {
             }
         });
 
+
+
         return view;
     }
 
@@ -159,10 +167,72 @@ public class InfoActivityFragment extends Fragment {
     public void onPause() {
         super.onPause();
         faves.save();
+	}
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        MovieSync.getVideos(HttpClientProvider.getInstance(getActivity()).getHttpClient(), movie, new MovieSync.OnGetVideosListener() {
+            @Override
+            public void onVideos(final List<Video> videos) {
+                Activity context = getActivity();
+                View view = getView();
+                if (view == null || context == null) return;
+                final LinearLayout videosList = (LinearLayout) view.findViewById(R.id.videos);
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        int height = getResources().getDimensionPixelSize(R.dimen.trailer_item_height);
+                        int lineHeight = getResources().getDimensionPixelSize(R.dimen.linear_line_break);
+                        for (int i = 0; i < videos.size() - 1; i++) {
+                            addVideoView(videos.get(i), videosList, inflater, height);
+                            addSeparator(videosList, lineHeight);
+                        }
+                        if (videos.size() > 0) {
+                            addVideoView(videos.get(videos.size() - 1), videosList, inflater, height);
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+
+    }
+
+    private void addSeparator(LinearLayout parent, int height) {
+        View line = new View(getActivity());
+        line.setBackgroundColor(getResources().getColor(R.color.info_seperator));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        line.setLayoutParams(params);
+        parent.addView(line);
+    }
+
+    private void addVideoView(final Video video, LinearLayout parent, LayoutInflater inflater, int height) {
+        View itemView = inflater.inflate(R.layout.item_video, parent, false);
+        TextView title = (TextView) itemView.findViewById(R.id.video_title);
+        title.setText(video.name);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        itemView.setLayoutParams(params);
+        parent.addView(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://www.youtube.com/watch?v=" + video.key));
+                startActivity(i);
+            }
+        });
     }
 
     private String getGenre(Map<Integer, String> genreMap, int id) {
         String genre = genreMap.get(id);
         return genre != null ? genre : "";
     }
+
+
+
 }
