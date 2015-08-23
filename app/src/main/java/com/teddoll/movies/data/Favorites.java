@@ -19,7 +19,7 @@ public class Favorites {
 
     private static Favorites instance;
     private static final String FILE = "faves.json";
-    private Context appContext;
+    private final Context appContext;
     private List<Movie> favorites;
     private final Object lock;
 
