@@ -38,7 +38,7 @@ import java.util.List;
 
 
 /**
- * Main Activity of the application. Holds a single fragment for viewing a grid of movies.
+ * Main Activity of the application. Holds a single listFragment for viewing a grid of movies.
  */
 public class MainActivity extends AppCompatActivity implements MovieListFragment.MovieListFragmentListener {
 
@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
     }
 
     private Sort sort;
-    private MovieListFragment fragment;
+    private MovieListFragment listFragment;
+    private InfoActivityFragment detailFragment;
     private ProgressBar progress;
     private Favorites favorites;
 
@@ -65,7 +66,9 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
         } else {
             sort = (Sort) savedInstanceState.getSerializable("sort");
         }
-        this.fragment = (MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+
+        this.listFragment = (MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.list_fragment);
+        this.detailFragment = (InfoActivityFragment) getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
 
 
 
@@ -79,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
         if (movies == null || movies.size() == 0) {
             updateMovies();
         } else {
-            fragment.updateMovies(movies);
+            listFragment.updateMovies(movies);
+            loadDetail(movies.get(0));
         }
     }
 
@@ -92,13 +96,21 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        fragment.updateMovies(movies);
+                        listFragment.updateMovies(movies);
+                        if(movies.size() > 0)
+                            loadDetail(movies.get(0));
                         progress.setVisibility(View.GONE);
                     }
                 });
 
             }
         });
+    }
+
+    private void loadDetail(Movie movie) {
+        if(detailFragment != null) {
+            detailFragment.updateMovie(movie);
+        }
     }
 
     @Override
@@ -148,14 +160,7 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
             }
         });
         spinner.setAdapter(adapter);
-        switch (this.sort) {
-            case POP:
-                spinner.setSelection(0);
-                break;
-            case RATE:
-                spinner.setSelection(1);
-                break;
-        }
+        spinner.setSelection(this.sort.ordinal());
         return true;
     }
 
@@ -182,14 +187,18 @@ public class MainActivity extends AppCompatActivity implements MovieListFragment
                 sort = Sort.FAVORITE;
                 break;
         }
-        fragment.updateMovies(getMovies());
+        listFragment.updateMovies(getMovies());
     }
 
     @Override
     public void onMovieSelected(Movie movie) {
-        Intent info = new Intent(this, InfoActivity.class);
-        info.putExtra("movie", movie);
-        startActivity(info);
+        if(detailFragment != null) {
+            loadDetail(movie);
+        } else {
+            Intent info = new Intent(this, InfoActivity.class);
+            info.putExtra("movie", movie);
+            startActivity(info);
+        }
     }
 
     @Override

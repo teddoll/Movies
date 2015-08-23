@@ -54,8 +54,19 @@ public class InfoActivityFragment extends Fragment {
 
     private Favorites faves;
 
+    private TextView title;
+    private TextView overview;
+    private TextView rate;
+    private TextView genre;
+    private TextView dateText;
+    private ImageView poster;
     private Button add;
     private Button remove;
+    private View trailerContainer;
+    private LinearLayout videoList;
+    private View reviewContainer;
+    private LinearLayout reviewList;
+
     public InfoActivityFragment() {
     }
 
@@ -70,7 +81,9 @@ public class InfoActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        movie = getArguments().getParcelable("movie");
+        Bundle args = getArguments();
+        if(args != null)
+            movie = args.getParcelable("movie");
 
     }
 
@@ -84,15 +97,29 @@ public class InfoActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_info, container, false);
-        TextView title = (TextView) view.findViewById(R.id.title);
-        TextView overview = (TextView) view.findViewById(R.id.overview);
-        TextView rate = (TextView) view.findViewById(R.id.rating);
-        TextView genre = (TextView) view.findViewById(R.id.genres);
-        TextView dateText = (TextView) view.findViewById(R.id.date);
-        ImageView poster = (ImageView) view.findViewById(R.id.poster);
+        title = (TextView) view.findViewById(R.id.title);
+        overview = (TextView) view.findViewById(R.id.overview);
+        rate = (TextView) view.findViewById(R.id.rating);
+        genre = (TextView) view.findViewById(R.id.genres);
+        dateText = (TextView) view.findViewById(R.id.date);
+        poster = (ImageView) view.findViewById(R.id.poster);
         add = (Button) view.findViewById(R.id.button_add_fave);
         remove = (Button) view.findViewById(R.id.button_remove_fave);
+        trailerContainer = view.findViewById(R.id.trailer_container);
+        videoList = (LinearLayout) view.findViewById(R.id.videos);
+        reviewContainer = view.findViewById(R.id.review_container);
+        reviewList = (LinearLayout) view.findViewById(R.id.reviews);
+        return view;
+    }
 
+    public void updateMovie(Movie movie) {
+        this.movie = movie;
+        loadMovie();
+    }
+
+
+    private void loadMovie() {
+        if (movie == null) return;
         String url = "http://image.tmdb.org/t/p/w500/" + movie.posterPath;
 
         Picasso.with(getActivity()).load(url).into(poster);
@@ -132,7 +159,7 @@ public class InfoActivityFragment extends Fragment {
         }
 
         boolean favorited = faves.hasFavorite(movie);
-        if(favorited) {
+        if (favorited) {
             add.setVisibility(View.GONE);
             remove.setVisibility(View.VISIBLE);
         } else {
@@ -159,44 +186,31 @@ public class InfoActivityFragment extends Fragment {
             }
         });
 
-
-
-        return view;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        faves.save();
-	}
-
-    @Override
-    public void onStart() {
-        super.onStart();
+        trailerContainer.setVisibility(View.GONE);
+        reviewContainer.setVisibility(View.GONE);
 
         MovieSync.getVideos(HttpClientProvider.getInstance(getActivity()).getHttpClient(), movie, new MovieSync.OnGetVideosListener() {
             @Override
             public void onVideos(final List<Video> videos) {
                 if (videos == null || videos.size() == 0) return;
-                Activity context = getActivity();
+                final Activity context = getActivity();
                 final View view = getView();
                 if (view == null || context == null) return;
 
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        view.findViewById(R.id.trailer_container).setVisibility(View.VISIBLE);
-                        final LinearLayout videosList = (LinearLayout) view.findViewById(R.id.videos);
-                        videosList.removeAllViews();
-                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        trailerContainer.setVisibility(View.VISIBLE);
+                        videoList.removeAllViews();
+                        LayoutInflater inflater = LayoutInflater.from(context);
                         int height = getResources().getDimensionPixelSize(R.dimen.trailer_item_height);
                         int lineHeight = getResources().getDimensionPixelSize(R.dimen.linear_line_break);
                         for (int i = 0; i < videos.size() - 1; i++) {
-                            addVideoView(videos.get(i), videosList, inflater, height);
-                            addSeparator(videosList, lineHeight);
+                            addVideoView(videos.get(i), videoList, inflater, height);
+                            addSeparator(videoList, lineHeight);
                         }
                         if (videos.size() > 0) {
-                            addVideoView(videos.get(videos.size() - 1), videosList, inflater, height);
+                            addVideoView(videos.get(videos.size() - 1), videoList, inflater, height);
                         }
 
                     }
@@ -209,17 +223,16 @@ public class InfoActivityFragment extends Fragment {
             @Override
             public void onReviews(final List<Review> reviews) {
                 if (reviews == null || reviews.size() == 0) return;
-                Activity context = getActivity();
+                final Activity context = getActivity();
                 final View view = getView();
                 if (view == null || context == null) return;
 
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        view.findViewById(R.id.review_container).setVisibility(View.VISIBLE);
-                        final LinearLayout reviewList = (LinearLayout) view.findViewById(R.id.reviews);
+                        reviewContainer.setVisibility(View.VISIBLE);
                         reviewList.removeAllViews();
-                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        LayoutInflater inflater = LayoutInflater.from(context);
                         int height = getResources().getDimensionPixelSize(R.dimen.trailer_item_height);
                         int lineHeight = getResources().getDimensionPixelSize(R.dimen.linear_line_break);
                         for (int i = 0; i < reviews.size() - 1; i++) {
@@ -235,6 +248,18 @@ public class InfoActivityFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        faves.save();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadMovie();
 
 
     }
@@ -281,7 +306,6 @@ public class InfoActivityFragment extends Fragment {
         String genre = genreMap.get(id);
         return genre != null ? genre : "";
     }
-
 
 
 }
